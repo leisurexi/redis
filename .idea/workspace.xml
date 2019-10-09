@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c456b143-24f9-4420-8845-860f93bce445" name="Default Changelist" comment="" />
+    <list default="true" id="c456b143-24f9-4420-8845-860f93bce445" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/leisurexi/redis/pool/RedisPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/leisurexi/redis/pool/RedisPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/leisurexi/redis/structure/BloomTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/leisurexi/redis/structure/BloomTest.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,8 +21,15 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1RvET4KLvEqbEtbOZIemBWuXnsj" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="false" id="Update" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -40,7 +53,20 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.PfTest">
+  <component name="RunManager" selected="Application.BloomTest">
+    <configuration name="BloomTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.leisurexi.redis.structure.BloomTest" />
+      <module name="redis" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.leisurexi.redis.structure.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="PfTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.leisurexi.redis.structure.PfTest" />
       <module name="redis" />
@@ -84,9 +110,11 @@
       <item itemvalue="Application.RedisDelayingQueue" />
       <item itemvalue="Application.RedisWithReentrantLock" />
       <item itemvalue="Application.PfTest" />
+      <item itemvalue="Application.BloomTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.BloomTest" />
         <item itemvalue="Application.PfTest" />
         <item itemvalue="Application.RedisDelayingQueue" />
         <item itemvalue="Application.RedisWithReentrantLock" />
@@ -106,11 +134,22 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1570539173039</updated>
-      <workItem from="1570539177045" duration="6973000" />
+      <workItem from="1570539177045" duration="7594000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
