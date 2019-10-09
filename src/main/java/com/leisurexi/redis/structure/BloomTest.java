@@ -1,5 +1,8 @@
 package com.leisurexi.redis.structure;
 
+import com.leisurexi.redis.pool.RedisPool;
+import io.rebloom.client.Client;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: Redis布隆过滤器误判测试
@@ -10,6 +13,16 @@ package com.leisurexi.redis.structure;
  */
 public class BloomTest {
 
-    
+    public static void main(String[] args) {
+        Client client = RedisPool.getClientConnection();
+        for (int i = 0; i < 100000; i++) {
+            client.add("codehole", "user" + i);
+            boolean exists = client.exists("codehole", "user" + i);
+            if(!exists){
+                System.out.println(i + "不存在");
+                break;
+            }
+        }
+    }
 
 }

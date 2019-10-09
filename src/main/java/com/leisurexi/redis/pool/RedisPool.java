@@ -1,5 +1,6 @@
 package com.leisurexi.redis.pool;
 
+import io.rebloom.client.Client;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -27,6 +28,10 @@ public class RedisPool {
      */
     public static Jedis getConnection() {
         return pool.getResource();
+    }
+
+    public static Client getClientConnection() {
+        return new Client(pool);
     }
 
 }
