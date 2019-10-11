@@ -28,6 +28,7 @@ public class SimpleRateLimiter {
         //记录行为 value和score都是用毫秒时间戳
         pipelined.zadd(key, nowTs, "" + nowTs);
         //移除时间窗口之前的行为记录，剩下的都是时间窗口内的
+        //删除一分钟之前的记录
         pipelined.zremrangeByScore(key, 0, nowTs - period * 1000);
         //获取窗口内的行为数量
         Response<Long> count = pipelined.zcard(key);
