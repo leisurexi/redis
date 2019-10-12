@@ -24,6 +24,7 @@ public class SimpleRateLimiter {
         String key = String.format("hist:%s:%s", userId, actionKey);
         long nowTs = System.currentTimeMillis();
         Pipeline pipelined = jedis.pipelined();
+        //redis中事务的开始
         pipelined.multi();
         //记录行为 value和score都是用毫秒时间戳
         pipelined.zadd(key, nowTs, "" + nowTs);
@@ -36,7 +37,10 @@ public class SimpleRateLimiter {
         //过期时间应该等于时间窗口的长度，再多宽限1s
         pipelined.expire(key, period + 1);
         //批量执行操作
+        //redis中事务的执行
         pipelined.exec();
+        //redis中事务的丢弃
+//        pipelined.discard();
         pipelined.close();
         //比较数量是否超标
         return count.get() <= maxCount;
