@@ -1,6 +1,5 @@
 package com.leisurexi.redis.pool;
 
-import com.sun.org.apache.regexp.internal.RE;
 import io.rebloom.client.Client;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
