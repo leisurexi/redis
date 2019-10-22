@@ -16,42 +16,28 @@ import java.util.Map;
  * Time: 12:38 下午
  */
 @ToString
-public class LRUMap {
+public class LRUMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
 
-    private LinkedHashMap<String, Object> map;
-    private int capacity;
+    int capacity;
 
     /**
      * LinkedHashMap有两种迭代方式
      * 按插入顺序 - 保证迭代元素的顺序与插入顺序一致
      * 按访问顺序 - 一种特殊的迭代顺序，从最近最少访问到最多访问的元素访问顺序，非常适合构建 LRU 缓存
      */
-    public LRUMap(int capacity) {
+    public LRUMap(int capacity, boolean accessOrder) {
+        super(capacity, 0.75f, accessOrder);
         this.capacity = capacity;
-        //这边是构建访问顺序，从最少访问的元素开始，当长度大于capacity会从头部开始删除元素
-        this.map = new LinkedHashMap(capacity, 0.75f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry eldest) {
-                return size() > capacity;
-            }
-        };
     }
 
-    public Object put(String key, Object value) {
-        Object oldValue = map.get(key);
-        map.put(key, value);
-        return oldValue;
-    }
-
-    /**
-     * 最新访问的元素会在放在最后面
-     */
-    public Object get(String key) {
-        return map.get(key);
+    //这边是构建访问顺序，从最少访问的元素开始，当长度大于capacity会从头部开始删除元素
+    @Override
+    protected boolean removeEldestEntry(Entry<K, V> eldest) {
+        return size() > capacity;
     }
 
     public static void main(String[] args) {
-        LRUMap map = new LRUMap(10);
+        LRUMap map = new LRUMap(10, Boolean.TRUE);
         for (int i = 0; i < 15; i++) {
             map.put("key" + i, "value" + i);
         }
