@@ -43,7 +43,9 @@ public class LRUMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
         }
         map.put("key10", "leisurexi");
         map.get("key11");
-        System.out.println(map);
+        for (Object entry : map.entrySet()) {
+            System.out.println(entry);
+        }
     }
 
 }
