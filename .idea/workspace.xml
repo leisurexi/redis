@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c456b143-24f9-4420-8845-860f93bce445" name="Default Changelist" comment="===&gt; leisurexi">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/leisurexi/redis/pool/RedisPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/leisurexi/redis/pool/RedisPool.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -124,10 +124,10 @@
     </configuration>
     <list>
       <item itemvalue="Application.SimpleRateLimiter" />
-      <item itemvalue="JUnit.BloomTest.test3" />
-      <item itemvalue="JUnit.BloomTest.test4" />
       <item itemvalue="Application.FunnelRateLimiter" />
       <item itemvalue="Application.TransactionDemo" />
+      <item itemvalue="JUnit.BloomTest.test3" />
+      <item itemvalue="JUnit.BloomTest.test4" />
     </list>
     <recent_temporary>
       <list>
@@ -156,6 +156,7 @@
       <workItem from="1570709888488" duration="3734000" />
       <workItem from="1570714157357" duration="1818000" />
       <workItem from="1570795388447" duration="5769000" />
+      <workItem from="1572340404726" duration="272000" />
     </task>
     <task id="LOCAL-00001" summary="===&gt; leisurexi">
       <created>1570636047824</created>
