@@ -24,11 +24,11 @@ public class RedisPool {
         pool = new JedisPool(config, "192.168.1.91");
     }
 
-    public static Jedis getConnection(){
+    public static Jedis getConnection() {
         return pool.getResource();
     }
 
-    public static Client getClientConnection(){
+    public static Client getClientConnection() {
         return new Client(pool);
     }
 
@@ -47,5 +47,7 @@ public class RedisPool {
 
 @FunctionalInterface
 interface CallWithJedis {
+
     void call(Jedis jedis);
+
 }
