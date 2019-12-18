@@ -24,11 +24,11 @@ public class RedisPool {
         pool = new JedisPool(config, "127.0.0.1");
     }
 
-    public static Jedis getConnection(){
+    public static Jedis getConnection() {
         return pool.getResource();
     }
 
-    public static Client getClientConnection(){
+    public static Client getClientConnection() {
         return new Client(pool);
     }
 
