@@ -121,6 +121,7 @@ public class Hash {
         byte[] items = fieldName.getBytes();
         items[0] = (byte) ((char) items[0] - 'a' + 'A');
         return new String(items);
+
     }
 
     @Data
