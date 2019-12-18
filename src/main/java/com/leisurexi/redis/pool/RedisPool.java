@@ -21,7 +21,7 @@ public class RedisPool {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMinIdle(5);
         config.setMaxIdle(20);
-        pool = new JedisPool(config, "192.168.1.91");
+        pool = new JedisPool(config, "127.0.0.1");
     }
 
     public static Jedis getConnection(){
@@ -43,9 +43,4 @@ public class RedisPool {
         }
     }
 
-}
-
-@FunctionalInterface
-interface CallWithJedis {
-    void call(Jedis jedis);
 }

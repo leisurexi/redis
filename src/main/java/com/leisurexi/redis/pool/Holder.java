@@ -1,7 +1,6 @@
 package com.leisurexi.redis.pool;
 
 import lombok.Data;
-import lombok.ToString;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +10,6 @@ import lombok.ToString;
  * Time: 5:37 下午
  */
 @Data
-@ToString
 public class Holder<T> {
 
     private T value;
