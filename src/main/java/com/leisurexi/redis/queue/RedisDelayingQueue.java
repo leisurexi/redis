@@ -66,7 +66,7 @@ public class RedisDelayingQueue<T> {
                 continue;
             }
             String value = values.iterator().next();
-            //抢到了
+            //如果删除队列中的这条消息成功，代表抢到了消息
             if (jedis.zrem(queueKey, value) > 0) {
                 //fastjson 反序列化
                 TaskItem<T> task = JSON.parseObject(value, TaskItem.class);
