@@ -1,96 +1,100 @@
 package com.leisurexi.redis.queue;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.leisurexi.redis.pool.RedisPool;
 import lombok.Data;
-import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 
-import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.UUID;
 
 /**
- * Created with IntelliJ IDEA.
- * Description: Redis的zset实现的延时队列
- * User: leisurexi
- * Date: 2019-10-08
- * Time: 9:40 下午
+ * @author: leisurexi
+ * @date: 2019-12-19 10:37 下午
+ * @description: redis的zset实现的延时队列
+ * @since JDK 1.8
  */
+@Slf4j
 public class RedisDelayingQueue<T> {
 
     @Data
-    @ToString
     static class TaskItem<T> {
         private String id;
         private T msg;
     }
 
-    //fastjson序列化对象中存在动态类型时，需要使用TypeReference
-    private Type taskType = new TypeReference<TaskItem<T>>() {}.getType();
-
     private Jedis jedis;
     private String queueKey;
 
-    public RedisDelayingQueue(Jedis jedis, String queueKey) {
-        this.jedis = jedis;
+    public RedisDelayingQueue(String queueKey) {
+        this.jedis = RedisPool.getConnection();
         this.queueKey = queueKey;
     }
 
+    /**
+     * 把消息放入队列
+     *
+     * @param msg
+     */
     public void delay(T msg) {
-        TaskItem<T> taskItem = new TaskItem<>();
+        TaskItem<T> task = new TaskItem<>();
         //分配唯一的uuid
-        taskItem.setId(UUID.randomUUID().toString());
-        taskItem.setMsg(msg);
-        String jsonString = JSON.toJSONString(taskItem);
+        task.setId(UUID.randomUUID().toString());
+        task.msg = msg;
+        //fastjson 序列化
+        String jsonString = JSON.toJSONString(task);
         //塞入延时队列，5s后再试
         jedis.zadd(queueKey, System.currentTimeMillis() + 5000, jsonString);
     }
 
+    /**
+     * 从队列中取出消息
+     */
     public void loop() {
-        //获取当前线程的中断状态，且这个方法会清除中断状态
         while (!Thread.interrupted()) {
-            //按score的升序排序，取第一个
+            //只取一条
             Set<String> values = jedis.zrangeByScore(queueKey, 0, System.currentTimeMillis(), 0, 1);
+            log.info(String.valueOf(values));
             if (values.isEmpty()) {
                 try {
-                    Thread.sleep(500); //歇会继续
+                    //歇会继续
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     break;
                 }
                 continue;
             }
-            String s = values.iterator().next();
-            //移除集合中的一个元素，如果返回值大于0，代表移除成功，在这里也就代表抢到了任务来消费
-            if (jedis.zrem(queueKey, s) > 0) {
-                TaskItem<T> task = JSON.parseObject(s, taskType);
-                System.out.println(task);
+            String value = values.iterator().next();
+            //抢到了
+            if (jedis.zrem(queueKey, value) > 0) {
+                //fastjson 反序列化
+                TaskItem<T> task = JSON.parseObject(value, TaskItem.class);
+                handlerMsg(task.getMsg());
             }
         }
     }
 
+    public void handlerMsg(T msg) {
+        log.info(String.valueOf(msg));
+    }
+
     public static void main(String[] args) {
-        Jedis jedis = RedisPool.getConnection();
-        RedisDelayingQueue<Object> queue = new RedisDelayingQueue<>(jedis, "q-demo");
+        RedisDelayingQueue<String> queue = new RedisDelayingQueue<>("queue-demo");
         Thread product = new Thread(() -> {
             for (int i = 0; i < 10; i++) {
-                queue.delay("codehole " + i);
+                queue.delay("leisurexi-" + i);
             }
-        });
-
-        Thread consumer = new Thread(() -> queue.loop());
-
+        }, "product");
+        Thread consumer = new Thread(() -> queue.loop(), "consumer");
         product.start();
         consumer.start();
-
         try {
             product.join();
             Thread.sleep(6000);
             consumer.interrupt();
             consumer.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
