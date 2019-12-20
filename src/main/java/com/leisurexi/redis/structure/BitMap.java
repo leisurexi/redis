@@ -21,25 +21,24 @@ public class BitMap {
 
     private static final String KEY = "signin";
 
-    public static void init() {
+    public static void init(int month) {
+        checkMoth(month);
         RedisPool.execute(jedis -> {
             int days = 0;
             LocalDate localDate = LocalDate.now();
             for (int i = 1; i <= 12; i++) {
-                LocalDate month = localDate.withMonth(i);
-                LocalDate lastDay = month.with(TemporalAdjusters.lastDayOfMonth());
+                LocalDate date = localDate.withMonth(i);
+                LocalDate lastDay = date.with(TemporalAdjusters.lastDayOfMonth());
                 days += lastDay.getDayOfMonth();
             }
             log.info("今年的总天数是: {}", days);
             jedis.setbit(KEY, days, false);
         });
-        signIn(12);
+        signIn(month);
     }
 
     private static void signIn(int month) {
-        if (month < 1 || month > 12) {
-            throw new IllegalArgumentException("month must between 1 and 12");
-        }
+        checkMoth(month);
         RedisPool.execute(jedis -> {
             Month month1 = new Month(month);
             int first = month1.firstDayOfYear();
@@ -64,9 +63,7 @@ public class BitMap {
      * @return
      */
     public static void signInDays(int month) {
-        if (month < 1 || month > 12) {
-            throw new IllegalArgumentException("month must between 1 and 12");
-        }
+        checkMoth(month);
         RedisPool.execute(jedis -> {
             Month month1 = new Month(month);
             int first = month1.firstDayOfYear();
@@ -87,6 +84,12 @@ public class BitMap {
             }
             log.info("用户在{}月，一共签到了{}天", month, signInDays);
         });
+    }
+
+    private static void checkMoth(int month) {
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException("month must between 1 and 12");
+        }
     }
 
     private static class Month {
@@ -119,7 +122,7 @@ public class BitMap {
     }
 
     public static void main(String[] args) {
-        init();
+        init(12);
         signInDays(12);
     }
 
