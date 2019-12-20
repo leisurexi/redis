@@ -24,8 +24,7 @@ public class PfTest {
 //                break;
 //            }
         }
-        long total = jedis.pfcount(KEY);
-        System.out.printf("%d %d\n", 100000, total);
+
     }
 
 }

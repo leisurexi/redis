@@ -100,7 +100,6 @@ public class RedisReentrantLock {
         log.info("{} 线程释放锁: {}", Thread.currentThread().getName(), lock.unlock( "leisurexi"));
 
         thread.join();
-
     }
 
 }
