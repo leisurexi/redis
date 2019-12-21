@@ -1,57 +1,61 @@
 package com.leisurexi.redis.limiter;
 
+import com.leisurexi.redis.pool.Holder;
 import com.leisurexi.redis.pool.RedisPool;
-import redis.clients.jedis.Jedis;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
 /**
- * Created with IntelliJ IDEA.
- * Description: Redis实现的简单限流策略
- * User: leisurexi
- * Date: 2019-10-10
- * Time: 9:32 下午
+ * @author: leisurexi
+ * @date: 2019-12-21 2:11 下午
+ * @description: redis实现的简单限流
+ * @since JDK 1.8
  */
+@Slf4j
 public class SimpleRateLimiter {
 
-    private Jedis jedis;
-
-    public SimpleRateLimiter(Jedis jedis) {
-        this.jedis = jedis;
-    }
-
-    public boolean isActionAllowed(String userId, String actionKey, int period, int maxCount) {
-        String key = String.format("hist:%s:%s", userId, actionKey);
-        long nowTs = System.currentTimeMillis();
-        Pipeline pipelined = jedis.pipelined();
-        //redis中事务的开始
-        pipelined.multi();
-        //记录行为 value和score都是用毫秒时间戳
-        pipelined.zadd(key, nowTs, "" + nowTs);
-        //移除时间窗口之前的行为记录，剩下的都是时间窗口内的
-        //删除一分钟之前的记录
-        pipelined.zremrangeByScore(key, 0, nowTs - period * 1000);
-        //获取窗口内的行为数量
-        Response<Long> count = pipelined.zcard(key);
-        //设置zset过期时间，避免冷用户持续占用内存
-        //过期时间应该等于时间窗口的长度，再多宽限1s
-        pipelined.expire(key, period + 1);
-        //批量执行操作
-        //redis中事务的执行
-        pipelined.exec();
-        //redis中事务的丢弃
+    /**
+     * @param userId    用户编号
+     * @param actionKey key
+     * @param period    限制时间
+     * @param maxCount  访问的最大次数
+     * @return
+     */
+    public static boolean isActionAllowed(String userId, String actionKey, int period, int maxCount) {
+        Holder<Boolean> holder = new Holder<>();
+        RedisPool.execute(jedis -> {
+            String key = String.format("hist:%s:%s", userId, actionKey);
+            long nowTs = System.currentTimeMillis();
+            Pipeline pipeline = jedis.pipelined();
+            //redis中事务的开始
+            pipeline.multi();
+            //记录行为
+            //value和score都使用毫秒时间戳
+            pipeline.zadd(key, nowTs, "" + nowTs);
+            //移除时间窗口之前的行为记录，剩下的都是时间窗口内的
+            pipeline.zremrangeByScore(key, 0, nowTs - period * 1000);
+            //获取窗口内的行为数量
+            Response<Long> count = pipeline.zcard(key);
+            //设置zset过期时间，避免冷用户持续占用内存
+            //过期时间应该等于时间窗口的长度，再多宽限1s
+            pipeline.expire(key, period + 1);
+            //批量执行操作
+            //redis中事务的执行
+            pipeline.exec();
+            //redis中事务的丢弃
 //        pipelined.discard();
-        pipelined.close();
-        //比较数量是否超标
-        return count.get() <= maxCount;
+            pipeline.close();
+            //比较数量是否超标
+            holder.setValue(count.get() <= maxCount);
+        });
+        return holder.getValue();
     }
 
     public static void main(String[] args) {
-        Jedis jedis = RedisPool.getConnection();
-        SimpleRateLimiter limiter = new SimpleRateLimiter(jedis);
         for (int i = 0; i < 20; i++) {
             //限定用户60秒内只可以请求5次
-            System.out.println(limiter.isActionAllowed("leisurexi", "reply", 60, 5));
+            log.info(String.valueOf(isActionAllowed("leisurexi", "replay", 60, 5)));
         }
     }
 
