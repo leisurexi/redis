@@ -1,15 +1,17 @@
 package com.leisurexi.redis.limiter;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * Description: 单机版的漏斗限流示例(分布式可以使用RedisCell)
- * User: leisurexi
- * Date: 2019-10-11
- * Time: 8:26 下午
+ * @author: leisurexi
+ * @date: 2019-12-21 8:15 下午
+ * @description: 单机版的漏斗限流示例(分布式可以使用RedisCell)
+ * @since JDK 1.8
  */
+@Slf4j
 public class FunnelRateLimiter {
 
     /**
@@ -17,13 +19,9 @@ public class FunnelRateLimiter {
      * 过去了多久以及流水的速率。
      */
     static class Funnel {
-        //漏斗容量
         int capacity;
-        //漏嘴流水速率
         float leakingRate;
-        //漏斗剩余空间
         int leftQuota;
-        //上一次漏水时间
         long leakingTs;
 
         public Funnel(int capacity, float leakingRate) {
@@ -35,41 +33,35 @@ public class FunnelRateLimiter {
 
         void makeSpace() {
             long nowTs = System.currentTimeMillis();
-            //距离上一次漏水过去了多久
             long deltaTs = nowTs - leakingTs;
-            //又可以腾出不少空间
             int deltaQuota = (int) (deltaTs * leakingRate);
             //间隔时间太长，整数数字过大溢出
-            //整数类型溢出会变成负数
             if (deltaQuota < 0) {
-                leftQuota = capacity;
-                leakingTs = nowTs;
+                this.leftQuota = capacity;
+                this.leakingTs = nowTs;
                 return;
             }
             //腾出空间太小，最小单位是1
             if (deltaQuota < 1) {
                 return;
             }
-            leftQuota += deltaQuota;
-            leakingTs = nowTs;
-            //剩余空间不得高于容量
-            if (leftQuota > capacity) {
-                leftQuota = capacity;
+            this.leftQuota += deltaQuota;
+            this.leakingTs = nowTs;
+            if (this.leftQuota > this.capacity) {
+                this.leftQuota = this.capacity;
             }
         }
 
         boolean watering(int quota) {
             makeSpace();
-            //判断剩余空间是否足够
-            if (leftQuota >= quota) {
-                leftQuota -= quota;
+            if (this.leftQuota >= quota) {
+                this.leftQuota -= quota;
                 return true;
             }
             return false;
         }
     }
 
-    //所有的漏斗
     private Map<String, Funnel> funnels = new HashMap<>();
 
     public boolean isActionAllowed(String userId, String actionKey, int capacity, float leakingRate) {
@@ -79,14 +71,23 @@ public class FunnelRateLimiter {
             funnel = new Funnel(capacity, leakingRate);
             funnels.put(key, funnel);
         }
-        return funnel.watering(1); //需要1个quota
+        //需要1个quota
+        return funnel.watering(1);
     }
 
     public static void main(String[] args) {
         FunnelRateLimiter limiter = new FunnelRateLimiter();
         for (int i = 0; i < 20; i++) {
-            boolean result = limiter.isActionAllowed("leisurexi", "reply", 15, (float) 0.5);
-            System.out.println(result);
+            boolean result = limiter.isActionAllowed("leisurexi", "reply", 15, 0.5F);
+            log.info(String.valueOf(result));
+            if (!result) {
+                log.info("休息1s后再继续");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

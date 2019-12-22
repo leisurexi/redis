@@ -18,22 +18,24 @@ public class Consumer {
         jedis.subscribe(new Subscriber(), "leisurexi");
     }
 
+    private static class Subscriber extends JedisPubSub {
+
+        @Override
+        public void onMessage(String channel, String message) {
+            System.out.println(String.format("接收到消息: channel = %s, message = %s", channel, message));
+        }
+
+        @Override
+        public void onSubscribe(String channel, int subscribedChannels) {
+            System.out.println(String.format("订阅主题成功: channel = %s, subscribedChannels = %s", channel, subscribedChannels));
+        }
+
+        @Override
+        public void onUnsubscribe(String channel, int subscribedChannels) {
+            System.out.println(String.format("取消订阅主题成功: channel = %s, subscribedChannels = %s", channel, subscribedChannels));
+        }
+    }
+
 }
 
-class Subscriber extends JedisPubSub {
 
-    @Override
-    public void onMessage(String channel, String message) {
-        System.out.println(String.format("接收到消息: channel = %s, message = %s", channel, message));
-    }
-
-    @Override
-    public void onSubscribe(String channel, int subscribedChannels) {
-        System.out.println(String.format("订阅主题成功: channel = %s, subscribedChannels = %s", channel, subscribedChannels));
-    }
-
-    @Override
-    public void onUnsubscribe(String channel, int subscribedChannels) {
-        System.out.println(String.format("取消订阅主题成功: channel = %s, subscribedChannels = %s", channel, subscribedChannels));
-    }
-}
