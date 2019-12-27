@@ -3,6 +3,7 @@ package com.leisurexi.redis.lock;
 import com.leisurexi.redis.pool.RedisPool;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.params.SetParams;
 
 import java.util.Arrays;
@@ -22,12 +23,15 @@ public class RedisReentrantLock {
 
     private ThreadLocal<Map<String, Integer>> lockers = new ThreadLocal<>();
 
-    private Jedis jedis;
+//    private Jedis jedis;
+
+    private JedisCluster jedis;
 
     private String value;
 
     public RedisReentrantLock() {
-        jedis = RedisPool.getConnection();
+//        jedis = RedisPool.getConnection();
+        jedis = RedisPool.getClusterConnection();
     }
 
     private boolean _lock(String key) {
