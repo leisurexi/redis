@@ -20,16 +20,16 @@ import java.util.Set;
 @Slf4j
 public class RedisPool {
 
-    private static final JedisPool pool;
-    private static final JedisCluster JEDIS_CLUSTER;
+    private static JedisPool pool;
+    private static JedisCluster JEDIS_CLUSTER;
 
     static {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMinIdle(5);
         config.setMaxIdle(20);
 
-        pool = new JedisPool(config, "192.168.1.98", 6379, 5000, "a1s2d3f4");
-        JEDIS_CLUSTER = new JedisCluster(new HostAndPort("192.168.1.234", 6380), config);
+//        pool = new JedisPool(config, "192.168.1.98", 6379, 5000, "a1s2d3f4");
+        JEDIS_CLUSTER = new JedisCluster(new HostAndPort("127.0.0.1", 6380), config);
         Map<String, JedisPool> nodes = JEDIS_CLUSTER.getClusterNodes();
         for (Map.Entry<String, JedisPool> entry : nodes.entrySet()) {
             log.info("节点ip地址和端口: {}", entry.getKey());
