@@ -2,7 +2,6 @@ package com.leisurexi.redis.lock;
 
 import com.leisurexi.redis.pool.RedisPool;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.params.SetParams;
 
@@ -10,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author: leisurexi
